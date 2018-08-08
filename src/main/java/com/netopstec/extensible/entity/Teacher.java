@@ -2,21 +2,14 @@ package com.netopstec.extensible.entity;
 
 import lombok.Data;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-
 /**
  * @author zhenye 2018/8/7
  */
-@Entity
 @Data
 public class Teacher {
     /**
      * 主键id
      */
-    @Id
-    @GeneratedValue
     private Integer id;
     /**
      * 名称

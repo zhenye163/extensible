@@ -4,7 +4,7 @@
 
 ## 1.当前项目技术栈
 
-<font color="red">Spring + SpringBoot + SpringMVC + JPA + lombok</font>
+<font color="red">Spring + SpringBoot + SpringMVC + Mybatis + lombok</font>
 
 ## 2.当前项目实体关系图
 
@@ -19,3 +19,7 @@
 启动项目，在Postman中测试如下图，说明基础项目应搭建完成。
 
 ![测试结果](../readme-1/images/2.png)
+
+## 4.修改Mapper层原因
+
+该项目Mapper层，之前用的是JPA，现在改用为Mybatis。改用Mybatis后，可以自定义SQL语句，这样从SQL性能和项目的后期扩展来说更好。

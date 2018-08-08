@@ -1,11 +1,11 @@
 package com.netopstec.extensible.service.impl;
 
-import com.netopstec.extensible.domain.StudentRepository;
 import com.netopstec.extensible.entity.Student;
+import com.netopstec.extensible.mapper.StudentMapper;
 import com.netopstec.extensible.service.StudentService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -14,11 +14,11 @@ import java.util.List;
 @Service
 public class StudentServiceImpl implements StudentService{
 
-    @Autowired
-    private StudentRepository studentRepository;
+    @Resource
+    private StudentMapper studentMapper;
 
     @Override
     public List<Student> findAll() {
-        return studentRepository.findAll();
+        return studentMapper.findAll();
     }
 }
