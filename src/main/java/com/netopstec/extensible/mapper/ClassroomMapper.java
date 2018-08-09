@@ -15,4 +15,11 @@ public interface ClassroomMapper {
      * @return 班级列表
      */
     List<Classroom> findAll();
+
+    /**
+     * 按id查询该班级的详情
+     * @param classroomId 班级id
+     * @return 班级详情
+     */
+    Classroom findById(Integer classroomId);
 }

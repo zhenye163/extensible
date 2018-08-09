@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.netopstec.extensible.mapper.ClassroomMapper" >
-    <select id="findAll" resultType="com.netopstec.extensible.entity.Classroom">
+    <select id="findAll" resultType="Classroom">
         SELECT * FROM classroom
         WHERE flag = 0
+    </select>
+
+    <select id="findById" parameterType="Integer" resultType="Classroom">
+        SELECT * FROM classroom
+        WHERE flag = 0
+        AND id = #{classroomId}
     </select>
 </mapper>

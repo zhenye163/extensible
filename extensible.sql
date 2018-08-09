@@ -99,8 +99,8 @@ INSERT INTO `student` VALUES ('35', '学35', '0', '18', '9', '0');
 INSERT INTO `student` VALUES ('36', '学36', '1', '17', '9', '0');
 INSERT INTO `student` VALUES ('37', '学37', '0', '18', '10', '0');
 INSERT INTO `student` VALUES ('38', '学38', '1', '19', '10', '0');
-INSERT INTO `student` VALUES ('39', '学', '0', '18', '10', '0');
-INSERT INTO `student` VALUES ('40', '学', '1', '18', '10', '0');
+INSERT INTO `student` VALUES ('39', '学39', '0', '18', '10', '0');
+INSERT INTO `student` VALUES ('40', '学40', '1', '18', '10', '0');
 
 -- ----------------------------
 -- Table structure for teacher

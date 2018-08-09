@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.netopstec.extensible.mapper.TeacherMapper" >
-    <select id="findAll" resultType="com.netopstec.extensible.entity.Teacher">
+    <select id="findAll" resultType="Teacher">
         SELECT * FROM teacher
         WHERE flag = 0
     </select>

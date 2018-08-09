@@ -15,4 +15,11 @@ public interface StudentMapper {
      * @return 学生列表结果集
      */
     List<Student> findAll();
+
+    /**
+     * 新增一名学生
+     * @param student  学生参数
+     * @return 是否新增成功
+     */
+    Integer insertOne(Student student);
 }
