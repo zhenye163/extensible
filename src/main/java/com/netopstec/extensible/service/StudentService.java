@@ -13,4 +13,11 @@ public interface StudentService {
      * @return 学生信息列表
      */
     List<Student> findAll();
+
+    /**
+     * 新增一名学生
+     * @param student  学生参数
+     * @return 是否新增成功
+     */
+    String insertOne(Student student);
 }
