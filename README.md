@@ -3,4 +3,4 @@
 # readme
 每次更新，会在readme文件夹中上传本次更新的技术要点。
 # 目前技术栈
-Spring + Springboot + Springmvc + Mybatis
+Spring + Springboot + Springmvc + Mybatis + Docker
