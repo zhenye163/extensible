@@ -26,17 +26,19 @@ public class StudentServiceImpl implements StudentService{
 
     @Override
     public List<Student> findAll() {
+        log.info("获取所有的学生信息");
         return studentMapper.findAll();
     }
 
     @Transactional(rollbackFor = Exception.class)
     @Override
     public String insertOne(Student student) {
+        log.info("插入一条新的学生数据");
         Integer classroomId = student.getClassroomId();
         Classroom classroom = classroomMapper.findById(classroomId);
         if (classroom == null){
             log.error("找不到这个班级");
-            int a = 1 / 0;
+            throw new RuntimeException("学生信息不全，无法入库");
         }
         Integer ID = studentMapper.insertOne(student);
 
