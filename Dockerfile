@@ -16,4 +16,5 @@ RUN mkdir /extensible/logs/info
 # 将maven打成的jar包复制到镜像目录中（相对路径---默认"."就是Dockerfile所在目录）
 ADD target/extensible-0.0.1-SNAPSHOT.jar extensible.jar
 # 指定容器启动时，需要执行的命令(运行该jar程序)
-ENTRYPOINT java -server -jar extensible.jar
+# 开发时采用的配置文件是application-dev.properties;但正式发布时，采用的配置文件是application-prod.properties
+ENTRYPOINT java -server -jar -Dspring.profiles.active=prod extensible.jar
