@@ -13,6 +13,8 @@ import java.security.interfaces.RSAPublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * RSA,一种非对称加密算法
@@ -26,33 +28,35 @@ public class RSAUtil {
 
         其算法具体实现基于一个十分简单的数论事实：将两个大素数相乘十分容易，但是想要对其乘积进行因式分解却极其困难，因此可以将乘积公开作为加密密钥。
      */
+//
+//    private static RSAPublicKey rsaPublicKey;
+//    private static RSAPrivateKey rsaPrivateKey;
 
-    private static RSAPublicKey rsaPublicKey;
-    private static RSAPrivateKey rsaPrivateKey;
-
-    public static void generateKey(){
+    public static Map<String,Object> generateKey(){
         try {
             KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
             // ‘512’，表示生成的是128位字符
             keyPairGenerator.initialize(512);
             KeyPair keyPair = keyPairGenerator.generateKeyPair();
-            rsaPublicKey = (RSAPublicKey)keyPair.getPublic();
-            rsaPrivateKey = (RSAPrivateKey) keyPair.getPrivate();
+            RSAPublicKey rsaPublicKey = (RSAPublicKey)keyPair.getPublic();
+            RSAPrivateKey rsaPrivateKey = (RSAPrivateKey) keyPair.getPrivate();
+            Map<String,Object> keyPairs = new HashMap<>();
+            keyPairs.put("publicKey",rsaPublicKey);
+            keyPairs.put("privateKey",rsaPrivateKey);
+            return keyPairs;
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
+        return null;
     }
 
     /**
-     * RSA加密
+     * RSA私钥加密
      * @param message 要加密的信息
      * @return 加密后的字符串
      */
-    public static String encrypt(String message){
-        //初始化密钥
-
+    public static String encrypt(String message, RSAPrivateKey rsaPrivateKey){
         try {
-            //私钥加密 公钥解密
             PKCS8EncodedKeySpec pkcs8EncodedKeySpec
                     = new PKCS8EncodedKeySpec(rsaPrivateKey.getEncoded());
             KeyFactory keyFactory = KeyFactory.getInstance("RSA");
@@ -68,13 +72,12 @@ public class RSAUtil {
     }
 
     /**
-     * RSA解密
+     * RSA公钥解密
      * @param message 要解密的信息
      * @return 解密后的字符串
      */
-    public static String decrypt(String message){
+    public static String decrypt(String message, RSAPublicKey rsaPublicKey){
         try {
-            //私钥加密 公钥解密
             X509EncodedKeySpec x509EncodedKeySpec =
                     new X509EncodedKeySpec(rsaPublicKey.getEncoded());
             KeyFactory keyFactory = KeyFactory.getInstance("RSA");
@@ -87,17 +90,5 @@ public class RSAUtil {
             e.printStackTrace();
         }
         return null;
-    }
-
-    public static void main(String[] args) {
-        generateKey();
-        String message = "123456";
-        System.out.println("将要加密的信息：" + message
-                + ",生成的公钥：" + Base64.encodeBase64String(rsaPublicKey.getEncoded())
-                + ",生成的私钥：" + Base64.encodeBase64String(rsaPrivateKey.getEncoded()));
-        String encryptMessage = encrypt(message);
-        System.out.println("加密后的信息：" + encryptMessage);
-        String decryptMessage = decrypt(encryptMessage);
-        System.out.println("解密后的信息：" + decryptMessage);
     }
 }

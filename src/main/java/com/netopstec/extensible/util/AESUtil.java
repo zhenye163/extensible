@@ -75,13 +75,13 @@ public class AESUtil {
             SecretKeySpec secretKeySpec = new SecretKeySpec(enCodeFormat,"AES");
             // 6.根据指定算法AES自成密码器
             Cipher cipher = Cipher.getInstance(ALGORITHM);
-            // 7.初始化密码器，第一个参数为加密(Encrypt_mode)或者解密解密(Decrypt_mode)操作，第二个参数为使用的KEY
+            // 7.初始化密码器，第一个参数为加密(Encrypt_mode)或者解密(Decrypt_mode)操作，第二个参数为使用的KEY
             cipher.init(mode, secretKeySpec);
 
             if (mode == Cipher.ENCRYPT_MODE) {
-                // 加密，AES加密后的结果默认是
                 byte[] content = message.getBytes();
                 byte[] result = cipher.doFinal(content);
+                // !!! 加密，AES加密后的结果默认是Base64格式的字节数组
                 return Base64.encodeBase64String(result);
             } else {
                 byte[] content = Base64.decodeBase64(message);
@@ -94,11 +94,4 @@ public class AESUtil {
         return null;
     }
 
-    public static void main(String[] args) {
-        String message = "500";
-        String encryptMessage = encrypt(message);
-        System.out.println("加密前：" + message + ",加密后：" + encryptMessage);
-        String decryptMessage = decrypt(encryptMessage);
-        System.out.println("解密前：" + encryptMessage + ",解密后：" + decryptMessage);
-    }
 }
