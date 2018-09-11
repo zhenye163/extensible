@@ -11,4 +11,32 @@
         WHERE flag = 0
         AND id = #{classroomId}
     </select>
+
+    <insert id="insertOne" parameterType="Map">
+        INSERT INTO classroom(`grade`,`class_no`,`chinese_teacher_id`,`math_teacher_id`,`english_teacher_id`,`flag`)
+        VALUES(#{grade},#{classNo},#{chineseTeacherId},#{mathTeacherId},#{englishTeacherId},#{flag})
+    </insert>
+
+    <update id="updateOne" parameterType="Map">
+        UPDATE classroom SET
+        `grade` = #{grade},
+        `class_no` = #{classNo},
+        `chinese_teacher_id` = #{chineseTeacherId},
+        `math_teacher_id` = mathTeacherId,
+        `english_teacher_id` = #{englishTeacherId}
+        WHERE id = #{id}
+    </update>
+
+    <update id="deleteById" parameterType="Integer">
+        UPDATE classroom SET
+        `flag` = 1
+        WHERE id = #{classroomId}
+    </update>
+
+    <select id="findByGradeAndClassNo">
+        SELECT * FROM classroom
+        WHERE flag = 0
+        AND `grade` = #{grade}
+        AND `class_no` = #{classNo}
+    </select>
 </mapper>

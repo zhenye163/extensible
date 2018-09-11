@@ -3,10 +3,7 @@ package com.netopstec.extensible.controller;
 import com.netopstec.extensible.entity.Student;
 import com.netopstec.extensible.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -20,9 +17,14 @@ public class StudentController {
     @Autowired
     private StudentService studentService;
 
-    @GetMapping("/all")
+    @GetMapping("/findAll")
     public List<Student> findAll(){
         return studentService.findAll();
+    }
+
+    @GetMapping("/findOne/{studentId}")
+    public Student findOne(@PathVariable("studentId") Integer studentId){
+        return studentService.findOne(studentId);
     }
 
     @PostMapping("/insertOne")
@@ -30,5 +32,13 @@ public class StudentController {
         return studentService.insertOne(student);
     };
 
+    @PutMapping("/updateOne")
+    public String updateOne(Student student){
+        return studentService.updateOne(student);
+    }
 
+    @DeleteMapping("/deleteOne/{studentId}")
+    public String deleteOne(@PathVariable("studentId") Integer studentId){
+        return studentService.deleteOne(studentId);
+    }
 }

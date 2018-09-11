@@ -1,14 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.netopstec.extensible.mapper.StudentMapper" >
-
     <select id="findAll" resultType="Student">
         SELECT * FROM student
         WHERE flag = 0
+    </select>
+
+    <select id="findById" parameterType="Integer" resultType="Student">
+        SELECT * FROM student
+        WHERE flag = 0
+        AND id = #{studentId}
     </select>
 
     <insert id="insertOne" parameterType="Map">
         INSERT INTO student(`name`,`sex`,`age`,`classroom_id`,`flag`)
         VALUES (#{name},#{sex},#{age}, #{classroomId},#{flag})
     </insert>
+
+    <update id="updateOne" parameterType="Map">
+        UPDATE student SET
+        `name` = #{name},
+        `sex` = #{sex},
+        `age` = #{age},
+        `classroom_id` = #{classroomId},
+        WHERE id = #{id}
+    </update>
+
+    <update id="deleteById" parameterType="Integer">
+        UPDATE student SET
+        `flag` = 1
+        WHERE id = #{studentId}
+    </update>
+
+    <select id="findByClassroomId" parameterType="Integer" resultType="Student">
+        SELECT * FROM student
+        WHERE flag = 0
+        AND classroom_id = #{classroomId}
+    </select>
 </mapper>

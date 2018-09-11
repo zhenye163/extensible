@@ -5,4 +5,30 @@
         SELECT * FROM teacher
         WHERE flag = 0
     </select>
+
+    <select id="findById" parameterType="Integer" resultType="Teacher">
+        SELECT * FROM teacher
+        WHERE flag = 0
+        AND id = #{teacherId}
+    </select>
+
+    <insert id="insertOne" parameterType="Map">
+        INSERT INTO teacher(`name`,`sex`,`age`,`subject`,`flag`)
+        VALUES(#{name},#{sex},#{age},#{subject},#{flag})
+    </insert>
+
+    <update id="updateOne" parameterType="Map">
+        UPDATE teacher SET
+        `name` = #{name},
+        `sex` = #{sex},
+        `age` = #{age},
+        `subject` = #{subject}
+        WHERE id = #{id}
+    </update>
+
+    <update id="deleteById" parameterType="Map">
+        UPDATE teacher SET
+        flag = 1
+        WHERE id = #{teacherId}
+    </update>
 </mapper>
