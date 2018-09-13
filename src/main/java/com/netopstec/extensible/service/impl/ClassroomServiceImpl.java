@@ -55,7 +55,7 @@ public class ClassroomServiceImpl implements ClassroomService {
             redisUtil.hset("classroom",String.valueOf(classroomId),JsonUtil.obj2String(classroom));
             return classroom;
         }
-        return null;
+        return JsonUtil.string2Obj(classroomStr,Classroom.class);
     }
 
     @Override

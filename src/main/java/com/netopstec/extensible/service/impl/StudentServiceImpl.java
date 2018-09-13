@@ -59,7 +59,7 @@ public class StudentServiceImpl implements StudentService{
             redisUtil.hset("student",String.valueOf(studentId),JsonUtil.obj2String(student));
             return student;
         }
-        return null;
+        return JsonUtil.string2Obj(studentStr,Student.class);
     }
 
     @Transactional(rollbackFor = Exception.class)

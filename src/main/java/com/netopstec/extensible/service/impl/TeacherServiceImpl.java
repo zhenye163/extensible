@@ -51,7 +51,7 @@ public class TeacherServiceImpl implements TeacherService {
             redisUtil.hset("teacher",String.valueOf(teacherId),JsonUtil.obj2String(teacher));
             return teacher;
         }
-        return null;
+        return JsonUtil.string2Obj(teacherStr,Teacher.class);
     }
 
     @Override
