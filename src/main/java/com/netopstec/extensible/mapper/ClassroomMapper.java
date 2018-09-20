@@ -1,5 +1,7 @@
 package com.netopstec.extensible.mapper;
 
+import com.netopstec.extensible.annotation.DataSourceType;
+import com.netopstec.extensible.common.DataSourceTypeEnum;
 import com.netopstec.extensible.entity.Classroom;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -15,6 +17,7 @@ public interface ClassroomMapper {
      * 遍历班级表
      * @return 班级列表
      */
+    @DataSourceType(DataSourceTypeEnum.slave)
     List<Classroom> findAll();
 
     /**
@@ -22,6 +25,7 @@ public interface ClassroomMapper {
      * @param classroomId 班级id
      * @return 班级详情
      */
+    @DataSourceType(DataSourceTypeEnum.slave)
     Classroom findById(Integer classroomId);
 
     /**
@@ -29,18 +33,21 @@ public interface ClassroomMapper {
      * @param classroom  班级参数
      * @return 是否新增成功
      */
+    @DataSourceType(DataSourceTypeEnum.master)
     Integer insertOne(Classroom classroom);
 
     /**
      * 更新班级信息
      * @param classroom 班级对象
      */
+    @DataSourceType(DataSourceTypeEnum.master)
     void updateOne(Classroom classroom);
 
     /**
      * 删除一个班级的记录
      * @param classroomId 班级主键id
      */
+    @DataSourceType(DataSourceTypeEnum.master)
     void deleteById(Integer classroomId);
 
     /**
@@ -49,5 +56,6 @@ public interface ClassroomMapper {
      * @param classNo 班号
      * @return 班级情况
      */
+    @DataSourceType(DataSourceTypeEnum.slave)
     List<Classroom> findByGradeAndClassNo(@Param("grade") Integer grade, @Param("classNo") Integer classNo);
 }

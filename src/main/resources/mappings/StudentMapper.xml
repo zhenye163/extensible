@@ -37,4 +37,14 @@
         WHERE flag = 0
         AND classroom_id = #{classroomId}
     </select>
+
+    <select id="findOneInMaster" parameterType="Integer" resultType="Student">
+        SELECT * FROM student
+        WHERE id = #{studentId}
+    </select>
+
+    <select id="findOneInSlave" parameterType="Integer" resultType="Student">
+        SELECT * FROM student
+        WHERE id = #{studentId}
+    </select>
 </mapper>
