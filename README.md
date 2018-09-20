@@ -10,4 +10,4 @@ Spring + Springboot + Springmvc + Mybatis + Docker + lombok + logback
 3. 将该web项目按日志的级别进行分层管理（slf4j + logback），具体的实现细节可参考[日志分层实现](https://github.com/zhenye163/extensible/blob/master/readme/readme-3/(slf4j%20%2B%20logback)%E8%BF%9B%E8%A1%8C%E6%97%A5%E5%BF%97%E5%88%86%E5%B1%82.md)
 4. 学习几种常见的加密算法，具体的实现细节可参考[常见的加密算法](https://github.com/zhenye163/extensible/blob/master/readme/readme-4/java-web%E5%BC%80%E5%8F%91%E4%B8%AD%E5%B8%B8%E8%A7%81%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E7%9A%84%E6%B1%87%E6%80%BB.md)
 5. SpringBoot整合Redis，具体的实现细节可参考[SpringBoot整合Redis](https://github.com/zhenye163/extensible/blob/master/readme/readme-5/Redis%E5%A4%A7%E5%90%88%E9%9B%86.md)
-
+6. SpringBoot + Mybatis进行多数据源的配置，具体的实现细节可参考[Mybatis多数据源配置](https://github.com/zhenye163/extensible/blob/master/readme/readme-6/Mybatis%E9%85%8D%E7%BD%AE%E5%A4%9A%E6%95%B0%E6%8D%AE%E6%BA%90.md)
