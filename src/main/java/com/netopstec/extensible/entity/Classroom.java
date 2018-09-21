@@ -2,6 +2,8 @@ package com.netopstec.extensible.entity;
 
 import lombok.Data;
 
+import java.util.Date;
+
 /**
  * @author zhenye 2018/8/7
  */
@@ -31,6 +33,10 @@ public class Classroom {
      * 英文老师id
      */
     private Integer englishTeacherId;
+    /**
+     * 操作时间
+     */
+    private Date operateTime;
     /**
      * （0：未删除，1：已删除）
      */

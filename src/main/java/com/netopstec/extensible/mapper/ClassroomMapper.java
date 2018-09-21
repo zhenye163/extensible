@@ -58,4 +58,5 @@ public interface ClassroomMapper {
      */
     @DataSourceType(DataSourceTypeEnum.slave)
     List<Classroom> findByGradeAndClassNo(@Param("grade") Integer grade, @Param("classNo") Integer classNo);
+
 }

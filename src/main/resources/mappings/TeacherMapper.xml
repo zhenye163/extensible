@@ -13,8 +13,8 @@
     </select>
 
     <insert id="insertOne" parameterType="Map">
-        INSERT INTO teacher(`name`,`sex`,`age`,`subject`,`flag`)
-        VALUES(#{name},#{sex},#{age},#{subject},#{flag})
+        INSERT INTO teacher(`name`,`sex`,`age`,`subject`,`operate_time`,`flag`)
+        VALUES(#{name},#{sex},#{age},#{subject},#{operateTime},#{flag})
     </insert>
 
     <update id="updateOne" parameterType="Map">
@@ -22,12 +22,14 @@
         `name` = #{name},
         `sex` = #{sex},
         `age` = #{age},
-        `subject` = #{subject}
+        `subject` = #{subject},
+        `operate_time` = NOW()
         WHERE id = #{id}
     </update>
 
     <update id="deleteById" parameterType="Map">
         UPDATE teacher SET
+        `operate_time` = NOW(),
         flag = 1
         WHERE id = #{teacherId}
     </update>

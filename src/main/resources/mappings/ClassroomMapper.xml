@@ -13,8 +13,8 @@
     </select>
 
     <insert id="insertOne" parameterType="Map">
-        INSERT INTO classroom(`grade`,`class_no`,`chinese_teacher_id`,`math_teacher_id`,`english_teacher_id`,`flag`)
-        VALUES(#{grade},#{classNo},#{chineseTeacherId},#{mathTeacherId},#{englishTeacherId},#{flag})
+        INSERT INTO classroom(`grade`,`class_no`,`chinese_teacher_id`,`math_teacher_id`,`english_teacher_id`，`operate_time`,`flag`)
+        VALUES(#{grade},#{classNo},#{chineseTeacherId},#{mathTeacherId},#{englishTeacherId},NOW(),#{flag})
     </insert>
 
     <update id="updateOne" parameterType="Map">
@@ -23,12 +23,14 @@
         `class_no` = #{classNo},
         `chinese_teacher_id` = #{chineseTeacherId},
         `math_teacher_id` = mathTeacherId,
-        `english_teacher_id` = #{englishTeacherId}
+        `english_teacher_id` = #{englishTeacherId},
+        `operate_time` = NOW()
         WHERE id = #{id}
     </update>
 
     <update id="deleteById" parameterType="Integer">
         UPDATE classroom SET
+        `operate_time` = NOW(),
         `flag` = 1
         WHERE id = #{classroomId}
     </update>
