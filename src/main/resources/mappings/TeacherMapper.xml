@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.netopstec.extensible.mapper.TeacherMapper" >
+    <select id="findAllInMaster" resultType="Teacher">
+        SELECT * FROM teacher
+    </select>
+
+    <delete id="truncateInSlave">
+        truncate teacher
+    </delete>
+
     <select id="findAll" resultType="Teacher">
         SELECT * FROM teacher
         WHERE flag = 0
@@ -33,4 +41,76 @@
         flag = 1
         WHERE id = #{teacherId}
     </update>
+
+    <select id="findOperatedInPastHalfHourInMaster" resultType="Teacher">
+        SELECT * FROM teacher
+        WHERE operate_time >= DATE_SUB(NOW(),INTERVAL 30 MINUTE)
+    </select>
+
+    <select id="isExistInSlave" parameterType="Integer" resultType="Integer">
+        SELECT COUNT(*) FROM teacher
+        WHERE id = #{teacherId}
+    </select>
+
+    <insert id="batchInsertInSlave" parameterType="List">
+        INSERT INTO teacher(`id`,`name`,`sex`,`age`,`subject`,`operate_time`,`flag`)
+        VALUES
+        <foreach collection="list" item="teacher" separator=",">
+            (
+            <choose>
+                <when test="teacher.id != null">
+                    #{teacher.id},
+                </when>
+                <otherwise>
+                    null,
+                </otherwise>
+            </choose>
+            #{teacher.name},
+            #{teacher.sex},
+            #{teacher.age},
+            #{teacher.subject},
+            #{teacher.operateTime},
+            #{teacher.flag}
+            )
+        </foreach>
+    </insert>
+
+    <update id="batchUpdateInSlave" parameterType="List">
+        UPDATE teacher
+        SET
+        name =
+        <foreach collection="list" item="teacher" index="index" separator=" " open="case id" close="end">
+            WHEN #{teacher.id} THEN #{teacher.name}
+        </foreach>
+        ,sex =
+        <foreach collection="list" item="teacher" index="index" separator=" " open="case id" close="end">
+            WHEN #{teacher.id} THEN #{teacher.sex}
+        </foreach>
+        ,age =
+        <foreach collection="list" item="teacher" index="index" separator=" " open="case id" close="end">
+            WHEN #{teacher.id} THEN #{teacher.age}
+        </foreach>
+        ,subject =
+        <foreach collection="list" item="teacher" index="index" separator=" " open="case id" close="end">
+            WHEN #{teacher.id} THEN #{teacher.subject}
+        </foreach>
+        ,operate_time =
+        <foreach collection="list" item="teacher" index="index" separator=" " open="case id" close="end">
+            WHEN #{teacher.id} THEN #{teacher.operateTime}
+        </foreach>
+        ,flag =
+        <foreach collection="list" item="teacher" index="index" separator=" " open="case id" close="end">
+            WHEN #{teacher.id} THEN #{teacher.flag}
+        </foreach>
+        WHERE
+        id IN
+        <foreach collection="list" item="teacher" index="index" open="(" separator="," close=")">
+            #{teacher.id}
+        </foreach>
+    </update>
+
+    <select id="findOperatedYesterdayInMaster" resultType="Teacher">
+        SELECT * FROM teacher
+        WHERE DATEDIFF(operate_time, NOW()) =  -1
+    </select>
 </mapper>

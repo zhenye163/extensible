@@ -14,6 +14,19 @@ import java.util.List;
 @Mapper
 public interface ClassroomMapper {
     /**
+     * 遍历master数据库中的班级表信息
+     * @return 班级列表结果集
+     */
+    @DataSourceType(DataSourceTypeEnum.master)
+    List<Classroom> findAllInMaster();
+
+    /**
+     * 清空slave数据库中的classroom表信息
+     */
+    @DataSourceType(DataSourceTypeEnum.slave)
+    void truncateInSlave();
+
+    /**
      * 遍历班级表
      * @return 班级列表
      */
@@ -59,4 +72,39 @@ public interface ClassroomMapper {
     @DataSourceType(DataSourceTypeEnum.slave)
     List<Classroom> findByGradeAndClassNo(@Param("grade") Integer grade, @Param("classNo") Integer classNo);
 
+    /**
+     * 查询master数据库中，最近半小时被操作过的classroom数据
+     * @return classroomList
+     */
+    @DataSourceType(DataSourceTypeEnum.master)
+    List<Classroom> findOperatedInPastHalfHourInMaster();
+
+    /**
+     * 查询slave数据库中，是否存在该条classroomId记录
+     * @param classroomId 班级主键id
+     * @return 是否存在(存在时，返回1；不存在时，返回0)
+     */
+    @DataSourceType(DataSourceTypeEnum.slave)
+    Integer isExistInSlave(Integer classroomId);
+
+    /**
+     * 将classroom列表记录，批量插入slave数据库中
+     * @param toInsertClassroomList classroom列表记录
+     */
+    @DataSourceType(DataSourceTypeEnum.slave)
+    void batchInsertInSlave(List<Classroom> toInsertClassroomList);
+
+    /**
+     * 批量更新slave数据库中的classroom列表记录
+     * @param toUpdateClassroomList classroom列表记录
+     */
+    @DataSourceType(DataSourceTypeEnum.slave)
+    void batchUpdateInSlave(List<Classroom> toUpdateClassroomList);
+
+    /**
+     * 查询master数据库中，昨天被操作过的classroom数据
+     * @return classroomList
+     */
+    @DataSourceType(DataSourceTypeEnum.master)
+    List<Classroom> findOperatedYesterdayInMaster();
 }

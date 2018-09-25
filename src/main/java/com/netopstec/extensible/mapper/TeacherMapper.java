@@ -13,6 +13,19 @@ import java.util.List;
 @Mapper
 public interface TeacherMapper {
     /**
+     * 遍历master数据库中的老师表信息
+     * @return 老师列表结果集
+     */
+    @DataSourceType(DataSourceTypeEnum.master)
+    List<Teacher> findAllInMaster();
+
+    /**
+     * 清空slave数据库中的teacher表信息
+     */
+    @DataSourceType(DataSourceTypeEnum.slave)
+    void truncateInSlave();
+
+    /**
      * 遍历教师表
      * @return 教师列表
      */
@@ -48,4 +61,40 @@ public interface TeacherMapper {
      */
     @DataSourceType(DataSourceTypeEnum.master)
     void deleteById(Integer teacherId);
+
+    /**
+     * 查询master数据库中，最近半小时被操作过的teacher数据
+     * @return teacherList
+     */
+    @DataSourceType(DataSourceTypeEnum.master)
+    List<Teacher> findOperatedInPastHalfHourInMaster();
+
+    /**
+     * 查询slave数据库中，是否存在该条teacher记录
+     * @param teacherId 老师主键id
+     * @return 是否存在(存在时，返回1；不存在时，返回0)
+     */
+    @DataSourceType(DataSourceTypeEnum.slave)
+    Integer isExistInSlave(Integer teacherId);
+
+    /**
+     * 将teacher列表记录，批量插入slave数据库中
+     * @param toInsertTeacherList teacher列表记录
+     */
+    @DataSourceType(DataSourceTypeEnum.slave)
+    void batchInsertInSlave(List<Teacher> toInsertTeacherList);
+
+    /**
+     * 批量更新slave数据库中的teacher列表记录
+     * @param toUpdateTeacherList teacher列表记录
+     */
+    @DataSourceType(DataSourceTypeEnum.slave)
+    void batchUpdateInSlave(List<Teacher> toUpdateTeacherList);
+
+    /**
+     * 查询master数据库中，昨天被操作过的teacher数据
+     * @return teacherList
+     */
+    @DataSourceType(DataSourceTypeEnum.master)
+    List<Teacher> findOperatedYesterdayInMaster();
 }

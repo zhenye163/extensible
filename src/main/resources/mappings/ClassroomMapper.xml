@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.netopstec.extensible.mapper.ClassroomMapper" >
+    <select id="findAllInMaster" resultType="Classroom">
+        SELECT * FROM classroom
+    </select>
+
+    <delete id="truncateInSlave">
+        truncate classroom
+    </delete>
+
     <select id="findAll" resultType="Classroom">
         SELECT * FROM classroom
         WHERE flag = 0
@@ -40,5 +48,82 @@
         WHERE flag = 0
         AND `grade` = #{grade}
         AND `class_no` = #{classNo}
+    </select>
+
+    <select id="findOperatedInPastHalfHourInMaster" resultType="Classroom">
+        SELECT * FROM classroom
+        WHERE operate_time >= DATE_SUB(NOW(),INTERVAL 30 MINUTE)
+    </select>
+
+    <select id="isExistInSlave" parameterType="Integer" resultType="Integer">
+        SELECT COUNT(*) FROM classroom
+        WHERE id = #{classroomId}
+    </select>
+
+    <insert id="batchInsertInSlave" parameterType="List">
+        INSERT INTO classroom(`id`,`grade`,`class_no`,`chinese_teacher_id`,`math_teacher_id`,`english_teacher_id`,`operate_time`,`flag`)
+        VALUES
+        <foreach collection="list" item="classroom" separator=",">
+            (
+            <choose>
+                <when test="classroom.id != null">
+                    #{classroom.id},
+                </when>
+                <otherwise>
+                    null,
+                </otherwise>
+            </choose>
+            #{classroom.grade},
+            #{classroom.classNo},
+            #{classroom.chineseTeacherId},
+            #{classroom.mathTeacherId},
+            #{classroom.englishTeacherId},
+            #{classroom.operateTime},
+            #{classroom.flag}
+            )
+        </foreach>
+    </insert>
+
+    <update id="batchUpdateInSlave" parameterType="List">
+        UPDATE classroom
+        SET
+        grade =
+        <foreach collection="list" item="classroom" index="index" separator=" " open="case id" close="end">
+            WHEN #{classroom.id} THEN #{classroom.grade}
+        </foreach>
+        ,class_no =
+        <foreach collection="list" item="classroom" index="index" separator=" " open="case id" close="end">
+            WHEN #{classroom.id} THEN #{classroom.classNo}
+        </foreach>
+        ,chinese_teacher_id =
+        <foreach collection="list" item="classroom" index="index" separator=" " open="case id" close="end">
+            WHEN #{classroom.id} THEN #{classroom.chineseTeacherId}
+        </foreach>
+        ,math_teacher_id =
+        <foreach collection="list" item="classroom" index="index" separator=" " open="case id" close="end">
+            WHEN #{classroom.id} THEN #{classroom.mathTeacherId}
+        </foreach>
+        ,english_teacher_id =
+        <foreach collection="list" item="classroom" index="index" separator=" " open="case id" close="end">
+            WHEN #{classroom.id} THEN #{classroom.englishTeacherId}
+        </foreach>
+        ,operate_time =
+        <foreach collection="list" item="classroom" index="index" separator=" " open="case id" close="end">
+            WHEN #{classroom.id} THEN #{classroom.operateTime}
+        </foreach>
+        ,flag =
+        <foreach collection="list" item="classroom" index="index" separator=" " open="case id" close="end">
+            WHEN #{classroom.id} THEN #{classroom.flag}
+        </foreach>
+        WHERE
+        id IN
+        <foreach collection="list" item="classroom" index="index" open="(" separator="," close=")">
+            #{classroom.id}
+        </foreach>
+    </update>
+
+    <select id="findOperatedYesterdayInMaster" resultType="Classroom">
+        SELECT * FROM classroom
+        WHERE DATEDIFF(operate_time, NOW()) =  -1
     </select>
 </mapper>
