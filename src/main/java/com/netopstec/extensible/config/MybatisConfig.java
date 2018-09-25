@@ -5,6 +5,7 @@ import com.netopstec.extensible.common.DataSourceTypeEnum;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.annotation.MapperScan;
+import org.mybatis.spring.boot.autoconfigure.SpringBootVFS;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -66,6 +67,7 @@ public class MybatisConfig {
     public SqlSessionFactory sqlSessionFactory(@Qualifier("dynamicDataSource") DynamicDataSource dynamicDataSource) throws Exception {
         SqlSessionFactoryBean factoryBean = new SqlSessionFactoryBean();
         factoryBean.setDataSource(dynamicDataSource);
+        factoryBean.setVfs(SpringBootVFS.class);
         // xml方式：指定XML位置和别名
         factoryBean.setMapperLocations(new PathMatchingResourcePatternResolver()
                 .getResources(env.getProperty("mybatis.mapper-locations")));
