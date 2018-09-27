@@ -45,12 +45,6 @@ public class SpringScheduleConfig {
 
 ![Spring自带定时任务效果图](images/1.png)
 
-我们查看@Scheduled的源码如下：
-
-```JAVA
-
-```
-
 ## SpringBoot整合Quartz
 
 SpringBoot从2.0版本之后，就开启了对Quartz自动配置的支持。
