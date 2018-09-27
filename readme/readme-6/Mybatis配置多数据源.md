@@ -20,7 +20,7 @@ SpringBoot的自动配置项里面，是包括对数据源的配置的。
 
 因此，我们在配置文件application*.properties中配置好数据源必要的参数（driverClassName,url,username,password）后，SpringBoot就会帮我们创建数据源对象。再进行了Mybatis的相关配置后，我们就可以对该数据源对应数据库中的数据进行操作了。<br/>
 
-1.我们要进行“Mybatis的数据源配置”，**第一步**，就是去掉SpringBoot对数据源的自动配置。
+1.我们要进行“Mybatis的多数据源配置”，**第一步**，就需要去掉SpringBoot对数据源的自动配置。
 
 即在SpringBoot的入口函数的@SpringBootApplication注解加上`exclude = DataSourceAutoConfiguration.class`,源码如下：
 
@@ -55,7 +55,7 @@ slave.datasource.password=root
 
 这里我是配置了两个数据源（一主一从），需要注意一点的是：url的配置是受SpringBoot版本的影响的，**低于2.0版本时，用的字段名称是url；高于2.0版本时，用的字段名称是jdbcUrl。**
 
-3.**第三步**，由于我们删除了SpringBoot对数据源的自动配置，我们就需要手动对数据源的配置。但考虑该Web项目中使用了多个数据源，考虑到程序的可读性，保证能够容易且清楚地知道每个Mapper接口里的方法具体使用的是哪个数据源。这里打算使用“自定义注解 + AOP方式”的实现动态数据源。
+3.**第三步**，由于我们删除了SpringBoot对数据源的自动配置，我们就需要手动地对数据源配置。但考虑该Web项目中使用了多个数据源，考虑到程序的可读性，保证能够容易且清楚地知道每个Mapper接口里的方法具体使用的是哪个数据源。这里打算使用“自定义注解 + AOP方式”的实现动态数据源。
 
 预先定义一个枚举类：
 
@@ -208,6 +208,8 @@ public class MybatisConfig {
     public SqlSessionFactory sqlSessionFactory(@Qualifier("dynamicDataSource") DynamicDataSource dynamicDataSource) throws Exception {
         SqlSessionFactoryBean factoryBean = new SqlSessionFactoryBean();
         factoryBean.setDataSource(dynamicDataSource);
+        // !!! 在配置包别名时，需要指定使用SpringBootVFS进行解析，否则无法正确解析。
+        factoryBean.setVfs(SpringBootVFS.class);
         // xml方式：指定XML位置和别名
         factoryBean.setMapperLocations(new PathMatchingResourcePatternResolver()
                 .getResources(env.getProperty("mybatis.mapper-locations")));
@@ -237,7 +239,7 @@ public class MybatisConfig {
 
 由于application-test.properties的配置内容如下：
 
-```BASh
+```BASH
 # 主数据库的配置
 master.datasource.driverClassName=com.mysql.jdbc.Driver
 master.datasource.jdbcUrl=jdbc:mysql://localhost:3306/extensible_master
@@ -344,8 +346,8 @@ INSERT INTO `student` VALUES ('35', '学35', '0', '18', '9', '0');
 INSERT INTO `student` VALUES ('36', '学36', '1', '17', '9', '0');
 INSERT INTO `student` VALUES ('37', '学37', '0', '18', '10', '0');
 INSERT INTO `student` VALUES ('38', '学38', '1', '19', '10', '0');
-INSERT INTO `student` VALUES ('39', '学', '0', '18', '10', '0');
-INSERT INTO `student` VALUES ('40', '学', '1', '18', '10', '0');
+INSERT INTO `student` VALUES ('39', '学39', '0', '18', '10', '0');
+INSERT INTO `student` VALUES ('40', '学40', '1', '18', '10', '0');
 
 -- ----------------------------
 -- Table structure for teacher
@@ -450,6 +452,158 @@ public class MutilDataSourceTest {
 
 出现如上图效果，则说明Mybatis多数据源的配置成功。
 
-# 声明
+# 多数据源事务管理的一点建议
 
-目前Github上的该项目还不是很完善，还缺少的是：定时同步信息（将extensible_master里面的数据，定时同步到redis和extensible_slave中）。下一次，总结的是：SpringBoot整合Quartz,并会把相关的功能完善。
+<font color="red">Spring的事务管理，是基于某个具体的数据源的。</font><br/>
+而Spring-web项目的事务控制（提交、异常回滚），大多都是在service层实现的。<br/>
+也就是说，在service层某个具体方法中使用了多个数据源时，事务控制可能会失效。以如下的java伪代码为例：
+
+```JAVA
+@Service
+@Slf4j
+public class TestSerivce{
+    @Autowired
+    private DataSourceMapper mapper;
+    @Autowired
+    private DataSourceTransactionManager transactionManager;
+    /**
+     * 剪切复制---从主库剪切，复制到从库的service层伪java代码实现
+     */
+    public void cutAndCopy(){
+        // 1. 手动开启事务控制
+        TransactionDefinition definition = new DefaultTransactionDefinition();
+        TransactionStatus status = transactionManager.getTransaction(definition);
+        try{
+            // 2. 从主库删除，并获取要转移的内容
+            List<T> dataList = mapper.deleteFromMaster();
+            // 3. 将要转移的内容，插入从库中
+            mapper.insertToSlave(dataList);
+            // 4. 手动提交事务
+            transactionManager.commit(status);
+        }catch(Exception e){
+            log.error("剪切功能出现异常，事务回滚。",e);
+            // 5. 出现异常时，手动回滚事务
+            transactionManager.rollback(status);
+        }
+    }
+}
+```
+
+<font color="red">在一个service方法中，进行了多个数据源的关联操作，上面代码的事务控制是失效的。</font>
+
+事务管理失效的原因：
+- 由于我们是用线程安全的数据源容器DataSourceContextHolder来保存将要使用的数据源的。**当我们在service层手动开启事务控制时**，通过“AOP+注解”来决定某个Mapper层方法具体使用哪个数据源的这种方式会失效，AOP仅仅是决定了数据源容器内存储的值，但**该方法实际联接的数据源只取决于调用上一个mapper方法使用的是哪个数据源**。
+- service层如果出现异常，如：从主库删除正确执行，插入从库时出现异常。由于我们知道Spring的事务管理是基于单个具体数据源，这里的异常回滚，仅仅是从库插入操作失败，但是主库删除的操作不会恢复！！！
+
+具体的测试代码如下：
+
+```JAVA
+/**
+ * @author zhenye 2018/9/20
+ */
+@SpringBootTest
+@RunWith(SpringRunner.class)
+@Slf4j
+public class MutilDataSourceTest {
+
+    @Autowired
+    private StudentMapper studentMapper;
+    @Autowired
+    private DataSourceTransactionManager transactionManager;
+
+    @Test
+    public void transactionTest(){
+        mutilDataSourceWithNoTransaction();
+        log.info("--------------------------------------------");
+        mutilDataSourceWithTransaction();
+    }
+
+    private void mutilDataSourceWithNoTransaction(){
+        log.info("不添加事务控制，在一个service中使用多数据源");
+        Student student1 = studentMapper.findOneInMaster(1);
+        log.info("此时使用的数据源是：" + DataSourceContextHolder.getDataSourceType());
+        log.info("此时该学生的信息为：" + student1);
+        Student student2 = studentMapper.findOneInSlave(1);
+        log.info("此时使用的数据源是：" + DataSourceContextHolder.getDataSourceType());
+        log.info("此时该学生的信息为：" + student2);
+    }
+
+    private void mutilDataSourceWithTransaction(){
+        log.info("添加事务控制，在一个service中使用多数据源");
+        TransactionDefinition definition = new DefaultTransactionDefinition();
+        TransactionStatus status = transactionManager.getTransaction(definition);
+        try{
+            Student student1 = studentMapper.findOneInMaster(1);
+            log.info("此时使用的数据源是：" + DataSourceContextHolder.getDataSourceType());
+            log.info("此时该学生的信息为：" + student1);
+            Student student2 = studentMapper.findOneInSlave(1);
+            log.info("此时使用的数据源是：" + DataSourceContextHolder.getDataSourceType());
+            log.info("此时该学生的信息为：" + student2);
+            transactionManager.commit(status);
+        }catch(Exception e){
+            transactionManager.rollback(status);
+        }
+    }
+}
+```
+
+为了能够看到明显的差异效果，我们需要是master与slave的数据不完全一致。由于该GitHub项目做了数据的初始化处理(同步master与slave)，我们需要把`ApplicationRunner.run()`的具体实现注释掉，然后把master数据库中id为1的student的name字段改为"学1_master"，把slave数据库中id为1的student的name字段改为"学1_slave",然后在进行测试，效果图如下：
+
+![AOP实现动态数据源切换失效](images/3.png)
+
+我们看到，在添加了事务控制后的`Student student1 = studentMapper.findOneInMaster(1);`,数据源容器中存的是master,但该Mapper方法实际选用的数据源却是slave，这是完全不符合预期逻辑`的。
+
+可以看出，在一个事务里面，必须使用一个具体的数据源（动态数据源的切换会失效）。
+
+还是以java伪代码为例，改进如下：
+
+```JAVA
+@Service
+@Slf4j
+public class TestSerivce{
+    @Autowired
+    private DataSourceMapper mapper;
+    @Autowired
+    private DataSourceTransactionManager transactionManager;
+    /**
+     * 剪切复制---从主库剪切，复制到从库的service层伪java代码实现
+     */
+    public void cutAndCopy(){
+        List<T> dataList = cutFromMaster();
+        insertIntoSlave(dataList);
+    }
+
+
+    private List<T> cutFromMaster(){
+        DataSourceContextHolder.setDataSourceType(DataSourceTypeEnum.master);
+        TransactionDefinition definition = new DefaultTransactionDefinition();
+        TransactionStatus status = transactionManager.getTransaction(definition);
+        List<T> dataList = new ArrayList();
+        try{
+            dataList = mapper.deleteFromMaster();
+            transactionManager.commit(status);
+        }catch(Exception e){
+            log.error("剪切出现异常，事务回滚。",e);
+            transactionManager.rollback(status);
+        }
+        return dataList;
+    }
+
+    private List<T> insertIntoSlave(List<T> dataList){
+        DataSourceContextHolder.setDataSourceType(DataSourceTypeEnum.slave);
+        TransactionDefinition definition = new DefaultTransactionDefinition();
+        TransactionStatus status = transactionManager.getTransaction(definition);
+        try{
+            mapper.insertIntoSlave(dataList);
+            transactionManager.commit(status);
+        }catch(Exception e){
+            log.error("粘贴出现异常，事务回滚。",e);
+            transactionManager.rollback(status);
+        }
+    }
+}
+```
+
+多数据源的事务控制具体实现，这里需要注意的两点：
+- 将一个具体的业务逻辑进行拆分成多小方法，保证每一个小方法里面只使用一个具体的数据源。
+- 在小方法内进行事务控制之前，更新数据源容器的值为当前方法使用的数据源。
