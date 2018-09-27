@@ -2,7 +2,7 @@
 
 ## Redis是什么？
 
-Redis是一个基于C语言编写、支持网络交互、可基于内存也可持久化、高性能的Key-Value数据库。Redis支持的数据类型有：<font color="red">字符串（string）、链表（list）、集合（set）、有序集合（zset）和哈希表（hash）。</font>
+Redis是一个基于C语言编写、支持网络交互、可基于内存也可持久化、高性能的Key-Value数据库。Redis支持的数据类型有：<font color="red">字符串（`string`）、链表（`list`）、集合（`set`）、有序集合（`zset`）和哈希表（`hash`）。</font>
 
 我的理解：Redis是非关系型(Nosql)数据库。数据可以放在内存中，进行读写操作时速度非常高（关系型数据库如MySql/Oracle是将数据持久化在磁盘的，相较于Redis而言读写操作速度较慢，当业务的并发量较大时，使用Redis这种类型的数据库来缓解关系型数据库的访问压力是很有必要的）。<br/>
 对比Memcache，Redis支持的数据类型更多，而且可以将部分数据持久到磁盘上（能够一定程度地避免服务器断电、宕机时数据丢失）。<br/>
@@ -46,7 +46,7 @@ redis-cli -h redis -p 6379
 
 常用的Redis命令汇总如下
 
-1. 与key相关的命令
+1. 与`key`相关的命令
 
 |命令格式            |命令描述                         |命令示例              |
 |-------------------|--------------------------------|----------------------|
@@ -57,11 +57,11 @@ redis-cli -h redis -p 6379
 |ttl key            |返回指定key的剩余生存时间,单位为秒 |ttl name              |
 |del key value      |删除指定key                      |del name              |
 
-与key相关的命令测试效果如下：
+与`key`相关的命令测试效果如下：
 
 ![key相关命令测试效果](images/4.png)
 
-2. 与list相关的命令
+2. 与`list`相关的命令
 
 |命令格式              |命令描述                    |命令示例                |
 |---------------------|----------------------------|-----------------------|
@@ -71,11 +71,11 @@ redis-cli -h redis -p 6379
 |lpop key             |移出列表中的第一个元素        |lpop database          |
 |llen key             |获取列表的长度               |llen database          |
 
-与list相关的命令测试效果如下：
+与`list`相关的命令测试效果如下：
 
 ![list相关命令测试效果](images/5.png)
 
-3. 与set相关的命令
+3. 与`set`相关的命令
 
 |命令格式               |命令描述                    |命令示例                  |
 |----------------------|----------------------------|-------------------------|
@@ -85,11 +85,11 @@ redis-cli -h redis -p 6379
 |sismember key value   |判断set中是否存在某个元素    |sismember language java   |
 |srem key value1 value2|移除set中一个或多个元素      |srem language java c      |
 
-与set相关的命令测试效果如下：
+与`set`相关的命令测试效果如下：
 
 ![set相关命令测试效果](images/6.png)
 
-4. 与zset相关的命令
+4. 与`zset`相关的命令
 
 |命令格式                      |命令描述                              |命令示例                   |
 |-----------------------------|--------------------------------------|--------------------------|
@@ -99,11 +99,11 @@ redis-cli -h redis -p 6379
 |zincrby key increment member |给zset指定元素的排序权重加increment     |zincrby week 5 monday      |
 |zrem key value1 value2       |移除zset中一个或多个元素                |zrem week tuesday thursday |
 
-与zset相关的命令测试效果如下：
+与`zset`相关的命令测试效果如下：
 
 ![zset相关命令测试效果](images/7.png)
 
-5. 与hash相关的命令
+5. 与`hash`相关的命令
 
 |命令格式                |命令描述                     |命令示例                        |
 |-----------------------|----------------------------|--------------------------------|
@@ -113,7 +113,7 @@ redis-cli -h redis -p 6379
 |hgetall key            |获取hash表中的所有信息        |lpop person                     |
 |hdel key field         |删除hash表中的某些字段        |hdel person address             |
 
-与hash相关的命令测试效果如下：
+与`hash`相关的命令测试效果如下：
 
 ![hash相关命令测试效果](images/8.png)
 
@@ -139,11 +139,11 @@ spring.redis.database=1
 # 设置debug=true，可以看SpringBoot帮我们做了哪些自动配置
 debug=true
 ```
-启动项目可以发现，positive matches里面有：
+启动项目可以发现，`positive matches`里面有：
 
 ![Redis自动配置](images/9.png)
 
-而真正使用Redis的服务，就是使用RestTemplate/StringRestTemplate类提供的方法。这里SpringBoot帮我们进行了Redis的相关配置，因此我们只需要注入这两个类，就可以使用Redis服务了。
+而真正使用Redis的服务，就是使用`RestTemplate/StringRestTemplate`类提供的方法。这里SpringBoot帮我们进行了Redis的相关配置，因此我们只需要注入这两个类，就可以使用Redis服务了。
 
 3. 测试代码
 
@@ -758,7 +758,7 @@ public class RedisTest {
 
 ![Key及String类型测试效果图](images/12.png)
 
-- Hash类型
+- `Hash`类型
 
 测试代码如下：
 
@@ -792,7 +792,7 @@ public void redisHashTest(){
 
 ![Hash类型测试效果图](images/13.png)
 
-- Set类型
+- `Set`类型
 
 测试代码如下：
 
@@ -821,7 +821,7 @@ public void redisSetTest(){
 
 ![Set类型测试效果图](images/14.png)
 
-- List类型
+- `List`类型
 
 测试代码如下：
 

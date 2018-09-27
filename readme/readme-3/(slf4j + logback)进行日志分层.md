@@ -1,12 +1,12 @@
 # slf4j和logback的概念
 
-SLF4J，是Simple Logging Facade for Java的简称。简而言之，slf4j是一个日志门面，它只提供了通用的日志接口，而未提供日志功能的具体实现。</br>
+SLF4J，是`Simple Logging Facade for Java`的简称。简而言之，slf4j是一个日志门面，它只提供了通用的日志接口，而未提供日志功能的具体实现。</br>
 log4j(log for java)以及logback框架都提供了日志的具体实现，而且SLF4J和log4j都是由一个开发人员Ceki完成，因此使用log4j进行日志实现的web项目，能够很好地切换为logback。
 目前，slf4j + logback也是业内最流行的日志管理方式。
 
 # 如何使用slf4j进行日志记录
 
-详情参见**com.netopstec.extensible.service.impl.StudentServiceImpl**<br/>
+详情参见**`com.netopstec.extensible.service.impl.StudentServiceImpl`**<br/>
 
 ```JAVA
 /**
@@ -44,15 +44,15 @@ public class StudentServiceImpl implements StudentService{
 }
 
 ```
-在application.properties里面，设置spring.profiles.active=dev，修改为开发环境后，再启动项目。在postman中键入如下参数：
+在application.properties里面，设置`spring.profiles.active=dev`，修改为开发环境后，再启动项目。在postman中键入如下参数：
 !["添加学生"方法的参数](images/1.png)
 在控制台会出现如下日志：
 ![相关日志](images/2.png)
 
-这里我们是用注解@Slf4j的方式导入，然后使用了info和error两种级别分别进行日志的记录。我们探索一下@Slf4j是如何帮助我们进行日志记录的。
+这里我们是用注解`@Slf4j`的方式导入，然后使用了`info`和`error`两种级别分别进行日志的记录。我们探索一下`@Slf4j是如何帮助我们进行日志记录的。
 > 在IDEA中通过快捷键(Ctrl + Alt + 鼠标左键)选中该注解，能够查看该注解的源码。
 
-@Sl4j的源码如下：
+`@Sl4j`的源码如下：
 
 ```JAVA
 package lombok.extern.slf4j;
@@ -63,7 +63,7 @@ public @interface Slf4j {
     String topic() default "";
 }
 ```
-这是lombok框架提供的一个源码级(SOURCE)类(TYPE)注解。也就是说，在编译时该注解已经实现了自己的功能。该注解的topic字段是自定义日志记录器的名称，默认就是该类的全限定名，这个可以自己测试。现在我们对比StudentServiceImpl.class与StudentServiceImpl.java，查看该注解到底帮我们做了些什么？
+这是lombok框架提供的一个源码级(SOURCE)类(TYPE)注解。也就是说，在编译时该注解已经实现了自己的功能。该注解的topic字段是自定义日志记录器的名称，默认就是该类的全限定名，这个可以自己测试。现在我们对比`StudentServiceImpl.class`与`StudentServiceImpl.java`，查看该注解到底帮我们做了些什么？
 
 ![@Slf4j注解的功能](images/3.png)
 
@@ -74,19 +74,19 @@ public class StudentServiceImpl implements StudentService{
     private static final Logger log = LoggerFactory.getLogger(StudentServiceImpl.class);
 }
 ```
-也就是说，我们可以自己通过LoggerFactory获取到日志记录器。具体使用哪种方式，取决于自己的喜好。
+也就是说，我们可以自己通过`LoggerFactory`获取到日志记录器。具体使用哪种方式，取决于自己的喜好。
 
 # 走近logback
 
 ![logback核心文件](images/4.png)
 
-从extensible项目的maven依赖层级图可以看出：logback-classic是依赖于slf4j-api和logback-core。spring-boot-starter默认集成了logback的核心文件logback-classic。因此一个springboot项目，默认就是用logback进行日志的管理的。
+从extensible项目的maven依赖层级图可以看出：`logback-classic`是依赖于`slf4j-api`和`logback-core`。spring-boot-starter默认集成了logback的核心文件`logback-classic`。因此一个springboot项目，默认就是用logback进行日志的管理的。
 
-Logback的具体实现是建立于三个主要类之上：Logger、Appender和Layout。这三种组件协同工作，使开发者可以按照消息类型和级别来记录消息，还可以在程序运行期内控制消息的输出格式和输出目的地。
+Logback的具体实现是建立于三个主要类之上：`Logger`、`Appender`和`Layout`。这三种组件协同工作，使开发者可以按照消息类型和级别来记录消息，还可以在程序运行期内控制消息的输出格式和输出目的地。
 
-## Logger
+## `Logger`
 
-从注解@Slf4j的功能，我们可以看到：在serviceImpl类中关联一个Logger对象，我们才能使用该对象打印日志。然后Logger的部分源码如下：
+从注解`@Slf4j`的功能，我们可以看到：在`serviceImpl`类中关联一个`Logger`对象，我们才能使用该对象打印日志。然后`Logger`的部分源码如下：
 
 ```JAVA
 package org.slf4j;
@@ -105,7 +105,7 @@ public interface Logger {
     void error(String var1);
 }
 ```
-从源码我们可以看出：日志的有效级别有：trace/debug/info/warn/error（实际还有all和off级别，参见Level的源码）。然后Logger是分级别的，其根是ROOT。
+从源码我们可以看出：日志的有效级别有：`trace/debug/info/warn/error`（实际还有`all`和`off`级别，参见Level的源码）。然后Logger是分级别的，其根是ROOT。
 
 > logger L的有效级别等于其层次等级里的第一个非null级别，顺序是从L开始，向上
 直至根logger。为确保所有logger都能够最终继承一个级别，根logger总是有级别，默认情况下，这个级别是DEBUG。
@@ -134,11 +134,11 @@ public class LogTest {
 
 测试结果如下：![logger测试](images/5.png)
 
-## Appender和Layout
+## `Appender`和`Layout`
 
-望文知意，Appender就是控制日志的输出位置：(控制台、文件、远程套接字服务器、MySQL、PostreSQL、Oracle和其他数据库、JMS和远程UNIX Syslog守护进程)。</br>
-一个Logger可以关联多个Appender,他们可以通过Logger.addAppender(Appender appender);来添加关联关系。</br>
-Layout就是控制日志的布局，我们可以通过如下方法进行布局自定义:
+望文知意，`Appender`就是控制日志的输出位置：(控制台、文件、远程套接字服务器、MySQL、PostreSQL、Oracle和其他数据库、JMS和远程UNIX Syslog守护进程)。</br>
+一个`Logger`可以关联多个`Appender`,他们可以通过`Logger.addAppender(Appender appender);`来添加关联关系。</br>
+`Layout`就是控制日志的布局，我们可以通过如下方法进行布局自定义:
 
 ```JAVA
 import ch.qos.logback.core.LayoutBase;
@@ -244,7 +244,7 @@ public class MySampleLayout extends LayoutBase<ILoggingEvent> {
     </springProfile>
 </configuration>
 ```
-然后在(com.netopstec.extensible.filter.InfoLevelFilter)添加自定义过滤器
+然后在(`com.netopstec.extensible.filter.InfoLevelFilter`)添加自定义过滤器
 
 ```JAVA
 /**
@@ -263,6 +263,6 @@ public class InfoLevelFilter extends Filter<ILoggingEvent> {
     }
 }
 ```
-在dockerfile文件中，添加两个建目录语句(RUN mkdir /extensible/logs/error;RUN mkdir /extensible/logs/info)，这两个目录用来存对应级别的日志。<br/>
+在dockerfile文件中，添加两个建目录语句(`RUN mkdir /extensible/logs/error;RUN mkdir /extensible/logs/info`)，这两个目录用来存对应级别的日志。<br/>
 发布成功后，进行多次测试，发现服务器日志如下图则说明日志分层成功。
 ![日志分层](images/6.png)

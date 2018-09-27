@@ -10,9 +10,9 @@
 - Spring-3.*版本之后，自带定时任务的实现
 - SpringBoot-2.*版本之后，均实现了Quartz的自动配置
 
-## Spring自带定时任务的实现---@Scheduled注解
+## Spring自带定时任务的实现---`@Scheduled`注解
 
-Spring自带定时任务的实现，是靠@Scheduled注解实现的。在SpringBoot项目中，我们想使该注解生效，还需要在类上加注解**@EnableScheduling**，开启对Spring定时任务的支持，源码如下：
+Spring自带定时任务的实现，是靠`@Scheduled`注解实现的。在SpringBoot项目中，我们想使该注解生效，还需要在类上加注解`@EnableScheduling`，开启对Spring定时任务的支持，源码如下：
 
 ```JAVA
 /**
@@ -37,9 +37,9 @@ public class SpringScheduleConfig {
 }
 ```
 
-上面的两个定时任务就是基于注解@Scheduled实现的。
-- runIntervalTask(),是一个按固定频率运行的任务，每1分钟执行一次。
-- runCornExpTask(),是一个按corn表达运行的任务，每分钟的第47秒运行一次。
+上面的两个定时任务就是基于注解`@Scheduled`实现的。
+- `runIntervalTask()`,是一个按固定频率运行的任务，每1分钟执行一次。
+- `runCornExpTask()`,是一个按corn表达运行的任务，每分钟的第47秒运行一次。
 
 启动项目后，效果图如下：
 
@@ -53,12 +53,16 @@ SpringBoot从2.0版本之后，就开启了对Quartz自动配置的支持。
 ![SpringBoot-2.0支持Quartz](images/2.png)
 
 Quartz中最重要的几个概念解释：
-- Scheduler,调度器。作用：用来统一管理工作内容、工作计划周期。
-- JobDetail,作业实例。作用：定义某项具体工作的工作内容。
-- Trigger,触发器。作用：定义某项具体工作的执行频率。
+- `Scheduler`,调度器。作用：用来统一管理工作内容、工作计划周期。
+- `JobDetail`,作业实例。作用：定义某项具体工作的工作内容。
+- `Trigger`,触发器。作用：定义某项具体工作的执行频率。
 
 这些抽象概念不是那么容易理解，我以“吃饭”来简单讲解一下它们的含义。
-比如我给自己定了一个计划表：每天8点到8点半吃早饭，每天12点到12点半吃午饭等等。**这个计划表，就是调度器（Scheduler）**,调度器告诉我们什么时候该干什么。然后，早饭吃的是豆浆+油条，午饭吃的是米饭。**早饭、午饭就是作业实例（JobDetail）**，作业实例是用来定义某项具体工作的工作内容。最后，**8点到8点半、12点到12点半就是两个触发器（Trigger）**，触发器关联某个作业实例，告诉该作业实例什么时候进行作业。<br/>
+比如我给自己定了一个计划表：每天8点到8点半吃早饭，每天12点到12点半吃午饭等等。
+- **这个计划表，就是调度器（Scheduler）**,调度器告诉我们什么时候该干什么。然后，早饭吃的是豆浆+油条，午饭吃的是米饭。
+- **早饭、午饭就是作业实例（JobDetail）**，作业实例是用来定义某项具体工作的工作内容。
+- **8点到8点半、12点到12点半就是两个触发器（Trigger）**，触发器关联某个作业实例，告诉该作业实例什么时候进行作业。<br/>
+
 从上面的事例说明，我们就很容易看出这三者之间的关系。
 
 ### 单任务的实现
@@ -262,18 +266,18 @@ public class ReportTimeTask implements QuartzScheduleTask{
 ![多定时任务效果图](images/4.png)
 
 然后，需要定义其他定时任务时，只需要两步：
-1. 实现QuartzScheduleTask的exec()方法，定义该定时任务的工作内容；
+1. 实现`QuartzScheduleTask.exec()`方法，定义该定时任务的工作内容；
 2. 在配置文件中加上该定时任务的触发器。
 
 多任务的配置说明：<br/>
 SpringBoot是将一个定时任务看做一个方法。上面配置的做法是：
-- 首先，读取配置文件中quartz.tasks中定义的任务名称及该任务的触发器。 
-- 然后，通过ApplicationContext（应用上下文对象），根据任务名称获取到相应的任务对象实例。
-- 再然后，通过Spring的MethodInvokingJobDetailFactoryBean注册JobDetail，该任务实例的第一个方法就是该任务的工作内容；通过Spring的CronTriggerFactoryBean注册CornTrigger，该任务实例在配置文件中的内容，就是该任务的触发器。
-- 把该任务的工作内容和触发器放在Map中，通过schedule的scheduleJobs()方法将所有JobDetail和Trigger添加到调度器中。
+- 首先，读取配置文件中`quartz.tasks`中定义的任务名称及该任务的触发器。 
+- 然后，通过`ApplicationContext`（应用上下文对象），根据任务名称获取到相应的任务对象实例。
+- 再然后，通过Spring的`MethodInvokingJobDetailFactoryBean`注册`JobDetail`，该任务实例的第一个方法就是该任务的工作内容；通过Spring的`CronTriggerFactoryBean`注册`CornTrigger`，该任务实例在配置文件中的内容，就是该任务的触发器。
+- 把该任务的工作内容和触发器放在Map中，通过`schedule`的`scheduleJobs()`方法将所有`JobDetai`l和`Trigger`添加到调度器中。
 - 这样SpringBoot就会帮我们管理调度器schedule实例，并自动按计划执行相应的定时任务。
 
-这里还需要注明一点：配置了多任务后，之前的单任务会失效。因为自定义的调度器Schdule中，并没有加入该单任务对应的JobDetail和Trigger，所以该调度器不会管理该单任务。
+这里还需要注明一点：配置了多任务后，之前的单任务会失效。因为自定义的调度器Schdule中，并没有加入该单任务对应的`JobDetail`和`Trigger`，所以该调度器不会管理该单任务。
 
 ## corn表达式简介
 
