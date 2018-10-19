@@ -41,4 +41,9 @@ public class StudentController {
     public String deleteOne(@PathVariable("studentId") Integer studentId){
         return studentService.deleteOne(studentId);
     }
+
+    @GetMapping("/async")
+    public String testAsyncMethod(){
+        return studentService.testAsyncMethod();
+    }
 }

@@ -41,4 +41,10 @@ public interface StudentService {
      * @return 是否删除成功
      */
     String deleteOne(Integer studentId);
+
+    /**
+     * 测试异步方法
+     * @return
+     */
+    String testAsyncMethod();
 }

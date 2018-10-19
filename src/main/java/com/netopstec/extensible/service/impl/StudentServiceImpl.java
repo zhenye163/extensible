@@ -8,6 +8,7 @@ import com.netopstec.extensible.exception.BaseException;
 import com.netopstec.extensible.mapper.ClassroomMapper;
 import com.netopstec.extensible.mapper.StudentMapper;
 import com.netopstec.extensible.service.StudentService;
+import com.netopstec.extensible.service.async.AsyncService;
 import com.netopstec.extensible.util.JsonUtil;
 import com.netopstec.extensible.util.RedisUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -32,6 +33,8 @@ public class StudentServiceImpl implements StudentService{
     private ClassroomMapper classroomMapper;
     @Autowired
     private RedisUtil redisUtil;
+    @Autowired
+    private AsyncService asyncService;
 
     @Override
     public List<Student> findAll() {
@@ -98,4 +101,19 @@ public class StudentServiceImpl implements StudentService{
         studentMapper.deleteById(studentId);
         return BaseConstant.SUCCESS;
     }
+
+    /**
+     * 在同一个类中用@Async注解的异步方法会失效！！！
+     */
+    @Override
+    public String testAsyncMethod() {
+        log.info("开始执行自己的方法");
+        for (int i = 0;i < 3;i++){
+            asyncService.asyncMethod();
+        }
+        log.info("结束执行自己的方法");
+        return BaseConstant.SUCCESS;
+    }
+
+
 }
