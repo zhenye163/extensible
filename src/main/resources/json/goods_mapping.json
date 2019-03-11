@@ -1,0 +1,30 @@
+{
+  "goodsInfo": {
+    "properties": {
+      "id": {
+        "type": "integer"
+      },
+      "name": {
+        "type": "text",
+        "analyzer": "myIkAnalyzer",
+        "search_analyzer": "myIkAnalyzer",
+        "fields": {
+          "pinyin": {
+            "type": "text",
+            "analyzer": "myPinyinAnalyzer",
+            "search_analyzer": "myPinyinAnalyzer"
+          }
+        }
+      },
+      "brand": {
+        "type": "text",
+        "index": "true",
+        "analyzer": "myIkAnalyzer"
+      },
+      "date": {
+        "type": "date",
+        "format": "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis"
+      }
+    }
+  }
+}
