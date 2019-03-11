@@ -36,7 +36,7 @@
 
  ## 准备工作
 
- 这篇博客需要的所有安装包，我都下载好并分享在[](我的百度网盘)，分享码是： ``。
+ 这篇博客需要的所有安装包，我都下载好并分享在[https://pan.baidu.com/s/1a6w50_IROqJii3Wo_0SOlA](我的百度网盘)，分享码是： `gmac`。
 
  > 由于要保证`ElasticSearch`的高可用，搭建的`ElasticSearch集群`至少需要2个`节点`。本篇文章使用的`ElasticSearch集群`中会有3个`节点`，也就是需要在3个虚拟机中分别搭建`ElasticSearch`所需要的环境。
 
