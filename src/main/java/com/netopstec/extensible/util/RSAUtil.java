@@ -1,7 +1,6 @@
 package com.netopstec.extensible.util;
 
 import org.apache.commons.codec.binary.Hex;
-import org.apache.tomcat.util.codec.binary.Base64;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;

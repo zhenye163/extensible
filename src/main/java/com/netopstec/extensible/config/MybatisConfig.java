@@ -1,7 +1,7 @@
 package com.netopstec.extensible.config;
 
-import com.netopstec.extensible.common.DynamicDataSource;
 import com.netopstec.extensible.common.DataSourceTypeEnum;
+import com.netopstec.extensible.common.DynamicDataSource;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.annotation.MapperScan;

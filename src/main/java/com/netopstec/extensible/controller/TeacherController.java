@@ -1,6 +1,5 @@
 package com.netopstec.extensible.controller;
 
-import com.netopstec.extensible.entity.Student;
 import com.netopstec.extensible.entity.Teacher;
 import com.netopstec.extensible.service.TeacherService;
 import org.springframework.beans.factory.annotation.Autowired;
