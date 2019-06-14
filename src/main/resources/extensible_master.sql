@@ -12,6 +12,9 @@ File Encoding         : 65001
 
 Date: 2018-09-21 18:24:32
 */
+CREATE database IF NOT EXISTS extensible_master;
+
+USE extensible_master;
 
 SET FOREIGN_KEY_CHECKS=0;
 

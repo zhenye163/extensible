@@ -13,6 +13,10 @@ File Encoding         : 65001
 Date: 2018-09-21 18:24:41
 */
 
+CREATE database IF NOT EXISTS extensible_slave;
+
+USE extensible_slave;
+
 SET FOREIGN_KEY_CHECKS=0;
 
 -- ----------------------------
