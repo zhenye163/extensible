@@ -35,9 +35,13 @@ public class HttpUtil {
         try {
             HttpGet get = new HttpGet(url + (queryString == null ? "" : queryString));
             response = httpClient.execute(get);
-            if (response != null
-                    && response.getStatusLine().getStatusCode() == 200) {
-                return EntityUtils.toString(response.getEntity());
+            if (response != null) {
+                String result = EntityUtils.toString(response.getEntity());
+                if (response.getStatusLine().getStatusCode() != 200) {
+                    log.error("error in HttpUtil ===> doGet:{}", result);
+                    return "fail";
+                }
+                return result;
             }
         } catch (Exception e) {
             log.error("error in HttpUtil --> doGet: ", e);
@@ -54,7 +58,7 @@ public class HttpUtil {
                 log.error("error in HttpUtil --> doGet: ", e);
             }
         }
-        return null;
+        return "fail";
     }
 
     /**
@@ -62,7 +66,6 @@ public class HttpUtil {
      */
     public static String doPost( String url, String query, String body) {
         CloseableHttpClient httpClient = HttpClientBuilder.create().build();
-        String result;
         CloseableHttpResponse response = null;
         try {
             HttpPost post = new HttpPost(url + (StringUtils.isNotEmpty(query) ? ("?" + query) : ""));
@@ -75,15 +78,16 @@ public class HttpUtil {
             entity.setContentType("application/json");
             post.setEntity(entity);
             response = httpClient.execute(post);
-            if (response != null && response.getStatusLine().getStatusCode() == 200) {
-                return EntityUtils.toString(response.getEntity());
-            } else {
-                log.error("error in HttpUtil ===> doPost:" + (response == null ? "response is null" : response.getStatusLine().getStatusCode()));
-                result = "fail";
+            if (response != null) {
+                String result = EntityUtils.toString(response.getEntity());
+                if (response.getStatusLine().getStatusCode() != 200) {
+                    log.error("error in HttpUtil ===> doPost:{}", result);
+                    return "fail";
+                }
+                return result;
             }
         } catch (Exception e) {
             log.error("error in HttpUtil ===> doPost:", e);
-            result = "fail";
         } finally {
             try {
                 // 释放资源
@@ -95,9 +99,9 @@ public class HttpUtil {
                 }
             } catch (IOException e) {
                 log.error("error in HttpUtil ===> doPost:", e);
-                result = "fail";
             }
         }
-        return result;
+        return "fail";
     }
+
 }
